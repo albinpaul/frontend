@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Card, Grid, Typography } from "@mui/material";
 import { auth, provider } from "../main";
 import { userAtom } from "../store/atoms/user";
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
@@ -18,9 +18,6 @@ const login = async () => {
     const token = credential.accessToken;
     // The signed-in user info.
     const user = result.user;
-    console.log(token)
-    console.log(user
-      )
   }).catch((error) => {
     // Handle Errors here.
     console.error(error)
@@ -39,12 +36,16 @@ export default function MainPage() {
   const [user, setUser] = useRecoilState(userAtom);
 
   useEffect(()=> {
-    onAuthStateChanged(auth, function(user){
+    onAuthStateChanged(auth, async function(user){
       if(user && user.email){
+        const token = await user.getIdToken()
+        console.log(user)
         setUser({
           loading: false,
           user: {
-            email: user.email
+            email: user.email,
+            accessToken: token,
+            displayName: user.displayName? user.displayName: "no name"
           },
         })
       } else {
@@ -63,20 +64,12 @@ export default function MainPage() {
   
   if(!user.user){
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-        minWidth="100vw"
-      >
-        <Grid item xs={3}>
-          <h2>Login</h2>
-          <br />
-          <br />
+        <Card>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Login
+          </Typography>
           <Button onClick={() => login()}>Sign in with Google 🚀 </Button>
-        </Grid>
-      </Box>
+        </Card>
       )
   }
   return <HomePage/>

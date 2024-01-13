@@ -70,7 +70,7 @@ import two_of_hearts from '../assets/cards/two_of_hearts.svg';
 import two_of_spades from '../assets/cards/two_of_spades.svg';
 import { signOut } from 'firebase/auth';
 import { auth } from '../main';
-import Header from './Header';
+import Header from './SignOutButton';
 
 let Cards = [
   ace_of_clubs,
@@ -139,24 +139,18 @@ const shuffle = (array: any[]) => {
 function GamePage() {
   Cards = shuffle(Cards)
   return (
-    <>
-      <Box display="flex"
-        justifyContent="center"
-          flexDirection="column"
-        alignItems="center"
-        minHeight="100vh" minWidth="100vw"
-        flexWrap="wrap"
-      >
-        <Box alignSelf="start" marginLeft="auto">
-          <Header />
-        </Box>
-        <Box flexDirection="row">
-        {
-          Cards.map(card => <img src={card} style={{ margin: "10px" }} width="130px" height="180px" />)
-        }
-        </Box>
-      </Box>
-    </>
+    <Box display="flex" 
+      flexDirection="row" 
+      minWidth="100vw"
+      flexWrap="wrap"
+    >
+      {
+        Cards.map(card => <img src={card} 
+            style={{ margin: "10px" }} 
+            width="130px" 
+            height="180px" />)
+      }
+    </Box>
   )
 }
 

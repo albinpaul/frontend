@@ -1,22 +1,22 @@
-import React from 'react'
-import Header from './Header'
-import { Box } from '@mui/material'
+import { Box, Button } from '@mui/material'
+import { useRecoilState } from 'recoil'
+import { userAtom } from '../store/atoms/user'
+import { Navigate, useNavigate } from 'react-router-dom'
+
+const createGame = () => {
+
+}
 
 function HomePage() {
+    const [user, setUser] = useRecoilState(userAtom)
+    const navigate = useNavigate()
+    if(!user.user){
+        navigate("/")
+    }
     return (
         <>
-            <Box display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh" minWidth="100vw"
-                flexWrap="wrap"
-            >
-                <Box alignSelf="start" marginLeft="auto">
-                    <Header />
-                </Box>
-            
-                <Box  margin="auto">HomePage</Box>
+            <Box margin="auto">
+                <Button onClick={() => createGame()}>Create Game</Button>
             </Box>
         </>
     )
