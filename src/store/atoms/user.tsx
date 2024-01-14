@@ -15,6 +15,7 @@ export const userAtom = atom<{
         email: string;
         accessToken: string;
         displayName: string,
+        photoUrl: string
     }
 }>({
     key: "userAtom",
