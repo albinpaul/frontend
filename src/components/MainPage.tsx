@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { useEffect } from "react";
 import HomePage from './HomePage'
 import bgImage from '../assets/52_poker_cards_illustration.jpg'
+import { useNavigate } from "react-router-dom";
 
 const login = async () => {
   await signInWithPopup(auth, provider)
@@ -34,7 +35,7 @@ const login = async () => {
 
 export default function MainPage() {
   const [user, setUser] = useRecoilState(userAtom);
-
+  const navigate = useNavigate()
   useEffect(() => {
     onAuthStateChanged(auth, async function (user) {
       if (user && user.email) {
@@ -87,5 +88,6 @@ export default function MainPage() {
       </Box >
     )
   }
-  return <HomePage />
+
+  navigate("/home")
 }

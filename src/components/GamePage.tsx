@@ -71,6 +71,13 @@ import two_of_spades from '../assets/cards/two_of_spades.svg';
 import { signOut } from 'firebase/auth';
 import { auth } from '../main';
 import Header from './SignOutButton';
+import { useRecoilState } from 'recoil';
+import { useNavigate, useParams } from 'react-router-dom';
+import { userAtom } from '../store/atoms/user';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { backend_url } from '../creds/backend_cred';
+import { Socket } from 'socket.io-client';
 
 let Cards = [
   ace_of_clubs,
@@ -135,20 +142,42 @@ const shuffle = (array: any[]) => {
   return array;
 };
 
-
-function GamePage() {
+function GamePage(props: any) {
+  const [user, _] = useRecoilState(userAtom)
+  const navigate = useNavigate()
+  if (!user.user) {
+    navigate("/")
+  }
+  let { gameId } = useParams()
+  if(!props.socket){
+    return <h1>Not connected to backend create room and try again</h1>
+  }
+  const instance = axios.create({
+    baseURL: backend_url,
+    timeout: 1000,
+  });
+  useEffect(() => {
+    // instance.get("/game/" + gameId, {
+    //   headers: {
+    //     "token": user.user?.accessToken,
+    //   }
+    // }).then((response) => {
+    //   console.log(response)
+    // }).catch(console.error)
+  })
   Cards = shuffle(Cards)
+
   return (
-    <Box display="flex" 
-      flexDirection="row" 
+    <Box display="flex"
+      flexDirection="row"
       minWidth="100vw"
       flexWrap="wrap"
     >
       {
-        Cards.map(card => <img src={card} 
-            style={{ margin: "10px" }} 
-            width="130px" 
-            height="180px" />)
+        Cards.map(card => <img src={card}
+          style={{ margin: "10px" }}
+          width="130px"
+          height="180px" />)
       }
     </Box>
   )

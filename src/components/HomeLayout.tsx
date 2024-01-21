@@ -1,4 +1,4 @@
-import { useOutlet } from "react-router-dom";
+import { useNavigate, useOutlet } from "react-router-dom";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
@@ -10,12 +10,13 @@ export const HomeLayout = () => {
   console.log(user)
   let headerContent = <div />
   if (user.user) {
+    const navigate = useNavigate()
     let loggedInContent = <>
       <Box display="flex" flexDirection="row" minHeight="3em" justifyContent="center" alignItems="center" marginX="1em" width="100%">
-        <Typography variant="h6" component="div">
+        <Typography variant="h6" component="div" onClick={()=>navigate("/home/")}>
           {user.user.displayName}
         </Typography>
-        <Box margin="1em">
+        <Box margin="1em" onClick={()=>navigate("/home/")}>
           <img src={user.user?.photoUrl} width="30em" height="30em" />
         </Box>
         <Box marginLeft="auto">
@@ -23,7 +24,6 @@ export const HomeLayout = () => {
         </Box>
       </Box>
     </>
-
 
     headerContent = <AppBar position="static">
       <Toolbar>
