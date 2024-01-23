@@ -149,9 +149,6 @@ function GamePage(props: any) {
     navigate("/")
   }
   let { gameId } = useParams()
-  if(!props.socket){
-    return <h1>Not connected to backend create room and try again</h1>
-  }
   const instance = axios.create({
     baseURL: backend_url,
     timeout: 1000,
@@ -165,6 +162,9 @@ function GamePage(props: any) {
     //   console.log(response)
     // }).catch(console.error)
   })
+  if(!props.socket){
+    return <h1>Not connected to backend create room and try again</h1>
+  }
   Cards = shuffle(Cards)
 
   return (

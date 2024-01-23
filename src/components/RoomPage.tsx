@@ -5,9 +5,11 @@ import { userAtom } from '../store/atoms/user'
 import { Box, Button } from '@mui/material'
 import { Socket, io } from 'socket.io-client'
 import { backend_url } from '../creds/backend_cred'
+import { auth } from '../main'
+import { setUserId } from 'firebase/analytics'
 
 export default function RoomPage() {
-    const [user, _] = useRecoilState(userAtom)
+    const [user, setUser] = useRecoilState(userAtom)
     const [socket, setSocket] = useState<Socket | null>(null)
     const [members, setMembers] = useState<string[]>([])
     const navigate = useNavigate()
@@ -15,7 +17,7 @@ export default function RoomPage() {
         navigate("/")
     }
     let { roomId } = useParams()
-
+    
     useEffect(() => {
         const newSocket = io(backend_url, {
             auth: {
@@ -24,17 +26,17 @@ export default function RoomPage() {
             },
             transports: ['websocket']
         })
-        setSocket(newSocket)
         newSocket.connect()
+        setSocket(newSocket)
         newSocket.on("send_client_names", names => {
             setMembers(names)
         })
+        let timeId = setInterval(()=>{
+            newSocket?.emit("get_connected_sockets", roomId)
+        }, 3000)
         newSocket.on("get_game_info", ()=>{
 
         })
-        let timeId = setInterval(() => {
-            newSocket?.emit("get_clients", roomId)
-        }, 1200);
         let timeId2 = setTimeout(() => {
             newSocket?.emit("join_room", roomId)
         }, 500)
@@ -47,6 +49,7 @@ export default function RoomPage() {
     }, [])
 
     const createGame = () => {
+        socket?.emit("create_game")
     }
     return (
         <>
