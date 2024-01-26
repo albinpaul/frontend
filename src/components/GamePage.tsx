@@ -68,18 +68,20 @@ import two_of_clubs from '../assets/cards/two_of_clubs.svg';
 import two_of_diamonds from '../assets/cards/two_of_diamonds.svg';
 import two_of_hearts from '../assets/cards/two_of_hearts.svg';
 import two_of_spades from '../assets/cards/two_of_spades.svg';
+import card_back_blue from '../assets/cards/card_back_blue.png'
 import { signOut } from 'firebase/auth';
 import { auth } from '../main';
 import Header from './SignOutButton';
 import { useRecoilState } from 'recoil';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { userAtom } from '../store/atoms/user';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { backend_url } from '../creds/backend_cred';
-import { Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 let Cards = [
+  card_back_blue,
   ace_of_clubs,
   ace_of_diamonds,
   ace_of_hearts,
@@ -134,17 +136,25 @@ let Cards = [
   two_of_spades,
 ]
 
-const shuffle = (array: any[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+const index = (array: any[]) => {
+  let RandomisedCards = []
+  for (let item of array) {
+    RandomisedCards.push(Cards[item])
   }
-  return array;
+  return RandomisedCards;
 };
 
-function GamePage(props: any) {
+function GamePage() {
   const [user, _] = useRecoilState(userAtom)
+  let cardInitialState = []
+  for (let i = 1; i <= 52; ++i) {
+    cardInitialState.push(i)
+  }
+  const [cards, setCards] = useState<number[]>(cardInitialState)
+  const [socket, setSocket] = useState<Socket | null>(null)
+  const [turn, setTurn] = useState<boolean>(false)
   const navigate = useNavigate()
+  const {roomId} = useLocation().state
   if (!user.user) {
     navigate("/")
   }
@@ -154,19 +164,44 @@ function GamePage(props: any) {
     timeout: 1000,
   });
   useEffect(() => {
-    // instance.get("/game/" + gameId, {
-    //   headers: {
-    //     "token": user.user?.accessToken,
-    //   }
-    // }).then((response) => {
-    //   console.log(response)
-    // }).catch(console.error)
-  })
-  if(!props.socket){
-    return <h1>Not connected to backend create room and try again</h1>
-  }
-  Cards = shuffle(Cards)
+    const newSocket = io(backend_url, {
+      auth: {
+        access_token: user.user?.accessToken,
+        display_name: user.user?.displayName
+      },
+      transports: ['websocket']
+    })
+    newSocket.connect()
+    newSocket.on("emitted_current_state", (state: number[]) => {
+      setCards(state)
+    })
+    newSocket.on("set_turn", (val: any) => {
+      console.log("setting turn", val)
+      setTurn(Boolean(val))
+    })
+    setSocket(newSocket)
+    let timeId = setTimeout(() => {
+      newSocket.emit("join_game_room", gameId)
+      newSocket.emit("get_current_state", gameId)
+      newSocket.emit("get_turn", gameId)
+    }, 500)
+    return () => {
+      clearTimeout(timeId)
+      newSocket.close()
+    }
+  }, [])
 
+  const testingCalls = () => {
+
+  }
+
+  const pickCard = (ind: number) => {
+    if(!turn){
+      return;
+    }
+    console.log("picked_card", ind)
+    socket?.emit("pick_card", gameId , ind)
+  }
   return (
     <Box display="flex"
       flexDirection="row"
@@ -174,11 +209,18 @@ function GamePage(props: any) {
       flexWrap="wrap"
     >
       {
-        Cards.map(card => <img src={card}
-          style={{ margin: "10px" }}
+        cards.map((id, ind) => 
+        <img src={Cards[id]}
+          style={{ 
+            margin: "10px", opacity: turn? 1: 0.6,
+            cursor: turn? "pointer" : "not-allowed"
+          }}
           width="130px"
-          height="180px" />)
+          height="180px"
+          onClick={() => pickCard(ind)}
+          />)
       }
+      <Button onClick={() => testingCalls()}>Testing</Button>
     </Box>
   )
 }

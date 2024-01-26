@@ -40,7 +40,7 @@ export default function MainPage() {
     onAuthStateChanged(auth, async function (user) {
       if (user && user.email) {
         const token = await user.getIdToken()
-        console.log("token is " + token)
+        // console.log("token is " + token)
         setUser({
           loading: false,
           user: {

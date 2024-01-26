@@ -37,9 +37,6 @@ function HomePage() {
 
     const navigate = useNavigate()
 
-    if (!user.user) {
-        navigate("/")
-    }
     useEffect(() => {
         const newSocket = io(backend_url, {
             auth: {
@@ -65,8 +62,14 @@ function HomePage() {
             newSocket.close()
         }
     }, [setSocket])
+    
+    useEffect(() => {
+        getRooms()
+    }, [])
 
-
+    if (!user.user) {
+        navigate("/")
+    }
     const createRoom = async () => {
         await socket?.emit("create_room", (room_id: string) => {
             let id = uuid()
@@ -106,9 +109,6 @@ function HomePage() {
         }).catch(console.error)
 
     }
-    useEffect(() => {
-        getRooms()
-    }, [])
 
     const deleteCallback = (id: string) => {
         let newEvents = new Map();

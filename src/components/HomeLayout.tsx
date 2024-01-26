@@ -10,12 +10,13 @@ import { auth } from "../main";
 export const HomeLayout = () => {
   const outlet = useOutlet();
   const [user, setUser] = useRecoilState(userAtom)
+  const navigate = useNavigate()
 
   useEffect(() => {
     onAuthStateChanged(auth, async function (user) {
       if (user && user.email) {
         const token = await user.getIdToken()
-        console.log("token is " + token)
+        // console.log("token is " + token)
         setUser({
           loading: false,
           user: {
@@ -35,10 +36,9 @@ export const HomeLayout = () => {
 
   }, [])
 
-  console.log(user)
+  // console.log(user)
   let headerContent = <div />
   if (user.user) {
-    const navigate = useNavigate()
     let loggedInContent = <>
       <Box display="flex" flexDirection="row" minHeight="3em" justifyContent="center" alignItems="center" marginX="1em" width="100%">
         <Typography variant="h6" component="div" onClick={() => navigate("/home/")}>
