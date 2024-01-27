@@ -40,7 +40,7 @@ export const HomeLayout = () => {
   let headerContent = <div />
   if (user.user) {
     let loggedInContent = <>
-      <Box display="flex" flexDirection="row" minHeight="3em" justifyContent="center" alignItems="center" marginX="1em" width="100%">
+      <Box display="flex" flexDirection="row" minHeight="3em" justifyContent="center" alignItems="center" width="100%">
         <Typography variant="h6" component="div" onClick={() => navigate("/home/")}>
           {user.user.displayName}
         </Typography>
@@ -55,14 +55,14 @@ export const HomeLayout = () => {
 
     headerContent = <AppBar position="static">
       <Toolbar>
-        <IconButton
+        {/* <IconButton
           size="large"
           edge="start"
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
         >
-        </IconButton>
+        </IconButton> */}
         {loggedInContent}
       </Toolbar>
     </AppBar>
@@ -76,7 +76,7 @@ export const HomeLayout = () => {
         minWidth="100vw"
         flexWrap="wrap"
       >
-        <Box minWidth="100vw">
+        <Box minWidth="100%">
           {headerContent}
         </Box>
         {outlet}

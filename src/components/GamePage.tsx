@@ -80,6 +80,61 @@ import axios from 'axios';
 import { backend_url } from '../creds/backend_cred';
 import { Socket, io } from 'socket.io-client';
 
+let carsMap = new Map();
+  
+carsMap.set("ace_clubs", ace_of_clubs),
+carsMap.set("ace_diamonds", ace_of_diamonds),
+carsMap.set("ace_hearts", ace_of_hearts),
+carsMap.set("ace_spades", ace_of_spades),
+carsMap.set("eight_clubs", eight_of_clubs),
+carsMap.set("eight_diamonds", eight_of_diamonds),
+carsMap.set("eight_hearts", eight_of_hearts),
+carsMap.set("eight_spades", eight_of_spades),
+carsMap.set("five_clubs", five_of_clubs),
+carsMap.set("five_diamonds", five_of_diamonds),
+carsMap.set("five_hearts", five_of_hearts),
+carsMap.set("five_spades", five_of_spades),
+carsMap.set("four_clubs", four_of_clubs),
+carsMap.set("four_diamonds", four_of_diamonds),
+carsMap.set("four_hearts", four_of_hearts),
+carsMap.set("four_spades", four_of_spades),
+carsMap.set("jack_clubs", jack_of_clubs),
+carsMap.set("jack_diamonds", jack_of_diamonds),
+carsMap.set("jack_hearts", jack_of_hearts),
+carsMap.set("jack_spades", jack_of_spades),
+carsMap.set("king_clubs", king_of_clubs),
+carsMap.set("king_diamonds", king_of_diamonds),
+carsMap.set("king_hearts", king_of_hearts),
+carsMap.set("king_spades", king_of_spades),
+carsMap.set("nine_clubs", nine_of_clubs),
+carsMap.set("nine_diamonds", nine_of_diamonds),
+carsMap.set("nine_hearts", nine_of_hearts),
+carsMap.set("nine_spades", nine_of_spades),
+carsMap.set("queen_clubs", queen_of_clubs),
+carsMap.set("queen_diamonds", queen_of_diamonds),
+carsMap.set("queen_hearts", queen_of_hearts),
+carsMap.set("queen_spades", queen_of_spades),
+carsMap.set("seven_clubs", seven_of_clubs),
+carsMap.set("seven_diamonds", seven_of_diamonds),
+carsMap.set("seven_hearts", seven_of_hearts),
+carsMap.set("seven_spades", seven_of_spades),
+carsMap.set("six_clubs", six_of_clubs),
+carsMap.set("six_diamonds", six_of_diamonds),
+carsMap.set("six_hearts", six_of_hearts),
+carsMap.set("six_spades", six_of_spades),
+carsMap.set("ten_clubs", ten_of_clubs),
+carsMap.set("ten_diamonds", ten_of_diamonds),
+carsMap.set("ten_hearts", ten_of_hearts),
+carsMap.set("ten_spades", ten_of_spades),
+carsMap.set("three_clubs", three_of_clubs),
+carsMap.set("three_diamonds", three_of_diamonds),
+carsMap.set("three_hearts", three_of_hearts),
+carsMap.set("three_spades", three_of_spades),
+carsMap.set("two_clubs", two_of_clubs),
+carsMap.set("two_diamonds", two_of_diamonds),
+carsMap.set("two_hearts", two_of_hearts)
+carsMap.set("two_spades", two_of_spades)
+
 let Cards = [
   card_back_blue,
   ace_of_clubs,
@@ -148,9 +203,9 @@ function GamePage() {
   const [user, _] = useRecoilState(userAtom)
   let cardInitialState = []
   for (let i = 1; i <= 52; ++i) {
-    cardInitialState.push(i)
+    cardInitialState.push([])
   }
-  const [cards, setCards] = useState<number[]>(cardInitialState)
+  const [cards, setCards] = useState<string[][]>(cardInitialState)
   const [socket, setSocket] = useState<Socket | null>(null)
   const [turn, setTurn] = useState<boolean>(false)
   const navigate = useNavigate()
@@ -172,7 +227,7 @@ function GamePage() {
       transports: ['websocket']
     })
     newSocket.connect()
-    newSocket.on("emitted_current_state", (state: number[]) => {
+    newSocket.on("emitted_current_state", (state: string[][]) => {
       setCards(state)
     })
     newSocket.on("set_turn", (val: any) => {
@@ -195,30 +250,43 @@ function GamePage() {
 
   }
 
-  const pickCard = (ind: number) => {
+  const pickCard = (cardArray:string[], ind: number) => {
     if(!turn){
       return;
     }
-    console.log("picked_card", ind)
-    socket?.emit("pick_card", gameId , ind)
+    console.log("picked_card", cardArray)
+    socket?.emit("pick_card", gameId , cardArray, ind)
   }
   return (
     <Box display="flex"
       flexDirection="row"
-      minWidth="100vw"
+      maxWidth="100%"
       flexWrap="wrap"
+      // justifyContent="space-evenly"
+      // overflow="hidden"
     >
+      <Box width="100%" minHeight="5em" bgcolor="white">
+      </Box>
       {
-        cards.map((id, ind) => 
-        <img src={Cards[id]}
+        cards.map((cardArray, ind) => {
+
+          let src = card_back_blue;    
+          if(cardArray.length > 0)
+          {
+            src = carsMap.get(cardArray[0]+"_"+cardArray[1])
+          }
+          return <img src={src}
+
           style={{ 
-            margin: "10px", opacity: turn? 1: 0.6,
+            margin: "0.5em",
+             opacity: turn? 1: 0.6,
             cursor: turn? "pointer" : "not-allowed"
           }}
           width="130px"
           height="180px"
-          onClick={() => pickCard(ind)}
-          />)
+          onClick={() => pickCard(cardArray, ind)}
+          />;
+        })
       }
       <Button onClick={() => testingCalls()}>Testing</Button>
     </Box>
