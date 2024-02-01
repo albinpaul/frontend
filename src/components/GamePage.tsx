@@ -246,10 +246,6 @@ function GamePage() {
     }
   }, [])
 
-  const testingCalls = () => {
-
-  }
-
   const pickCard = (cardArray:string[], ind: number) => {
     if(!turn){
       return;
@@ -288,7 +284,6 @@ function GamePage() {
           />;
         })
       }
-      <Button onClick={() => testingCalls()}>Testing</Button>
     </Box>
   )
 }
