@@ -1,14 +1,14 @@
-import { Alert, Box, Button, Container, Modal, Typography, useTheme } from '@mui/material'
-import { useRecoilState } from 'recoil'
-import { userAtom } from '../store/atoms/user'
-import { Navigate, useNavigate } from 'react-router-dom'
+import CloseIcon from '@mui/icons-material/Close'
+import { Box, Button, Container, Modal, useTheme } from '@mui/material'
 import axios from 'axios'
-import { backend_url } from '../creds/backend_cred'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
 import { Socket, io } from 'socket.io-client'
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid"
+import { backend_url } from '../creds/backend_cred'
+import { userAtom } from '../store/atoms/user'
 import Message from './Message'
-import CloseIcon from '@mui/icons-material/Close';
 
 
 const style = {
@@ -104,7 +104,7 @@ function HomePage() {
             headers: {
                 "token": user.user?.accessToken,
             }
-        }).then((response) => {
+        }).then(() => {
             return getRooms()
         }).catch(console.error)
 
@@ -122,7 +122,11 @@ function HomePage() {
     const handleJoinRoom = (event: any) => {
         event.preventDefault() 
         console.log("got submit")
-        let val = nameInputRef?.current?.value
+        if(!nameInputRef.current)
+        {
+            return;
+        }
+        let val = nameInputRef?.current["value"]
         console.log(val)
         socket?.emit("join_room", val, ()=>{
             handleClose()

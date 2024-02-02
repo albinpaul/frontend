@@ -12,12 +12,16 @@ import Button from "@mui/material/Button";
 
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { userAtom } from "../store/atoms/user";
+import { useRecoilState } from "recoil";
+import { signOut } from "firebase/auth";
+import { auth } from "../main";
+
 
 export const AppBar = ({ pages }: any) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [user, ] = useRecoilState(userAtom);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
 
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
@@ -29,7 +33,13 @@ export const AppBar = ({ pages }: any) => {
       navigate(path);
     }
   };
-
+  const logout = () => {
+    signOut(auth).then(() => {
+      navigate("/")
+    }).catch((error) => {
+      console.error(error)
+    });
+  }
   return (
     <MuiAppBar position="static">
       <Container maxWidth="xl">
@@ -72,7 +82,7 @@ export const AppBar = ({ pages }: any) => {
                 display: { xs: "block", md: "none" }
               }}
             >
-              {pages?.map((page) => (
+              {pages?.map((page: any) => (
                 <MenuItem
                   key={page.label}
                   onClick={() => handleCloseNavMenu(page.path)}
@@ -96,7 +106,7 @@ export const AppBar = ({ pages }: any) => {
             React Router Auth
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages?.map((page) => (
+            {pages?.map((page: any) => (
               <Button
                 key={page.label}
                 onClick={() => handleCloseNavMenu(page.path)}

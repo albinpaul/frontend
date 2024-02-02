@@ -1,11 +1,11 @@
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 import { useNavigate, useOutlet } from "react-router-dom";
-import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
 import { useRecoilState } from "recoil";
+import { auth } from "../main";
 import { userAtom } from "../store/atoms/user";
 import SignOutButton from "./SignOutButton";
-import { useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../main";
 
 export const HomeLayout = () => {
   const outlet = useOutlet();

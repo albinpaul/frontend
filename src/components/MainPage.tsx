@@ -1,12 +1,11 @@
-import { Box, Button, Card, Grid, Typography } from "@mui/material";
+import { Box, Button, Card, Typography } from "@mui/material";
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import bgImage from '../assets/52_poker_cards_illustration.jpg';
 import { auth, provider } from "../main";
 import { userAtom } from "../store/atoms/user";
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from "firebase/auth";
-import { useRecoilState } from "recoil";
-import { useEffect } from "react";
-import HomePage from './HomePage'
-import bgImage from '../assets/52_poker_cards_illustration.jpg'
-import { useNavigate } from "react-router-dom";
 
 const login = async () => {
   await signInWithPopup(auth, provider)
@@ -16,18 +15,18 @@ const login = async () => {
       if (!credential) {
         return;
       }
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
+      // const token = credential.accessToken;
+      // // The signed-in user info.
+      // const user = result.user;
     }).catch((error) => {
       // Handle Errors here.
       console.error(error)
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      // // The email of the user's account used.
+      // const email = error.customData.email;
+      // // The AuthCredential type that was used.
+      // const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
     });
 }

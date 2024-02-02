@@ -5,9 +5,6 @@ import { userAtom } from '../store/atoms/user'
 import { Box, Button } from '@mui/material'
 import { Socket, io } from 'socket.io-client'
 import { backend_url } from '../creds/backend_cred'
-import { auth } from '../main'
-import { setUserId } from 'firebase/analytics'
-import axios from 'axios'
 
 export default function RoomPage() {
     const [user, _] = useRecoilState(userAtom)

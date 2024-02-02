@@ -8,7 +8,6 @@ import { ThemeProvider, createTheme } from '@mui/material';
 
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -22,8 +21,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
 
 export const provider = new GoogleAuthProvider();
 export const auth = getAuth();
