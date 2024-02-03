@@ -124,6 +124,7 @@ function GamePage() {
   const [cards, setCards] = useState<string[][]>(cardInitialState)
   const [socket, setSocket] = useState<Socket | null>(null)
   const [turn, setTurn] = useState<boolean>(false)
+  const [points, setPoints] = useState<number>(0)
   const navigate = useNavigate()
   // const {roomId} = useLocation().state
   if (!user.user) {
@@ -141,6 +142,9 @@ function GamePage() {
     newSocket.connect()
     newSocket.on("emitted_current_state", (state: string[][]) => {
       setCards(state)
+    })
+    newSocket.on("update_points", (pointCount) => {
+      setPoints(pointCount)
     })
     newSocket.on("set_turn", (val: any) => {
       console.log("setting turn", val)
@@ -173,7 +177,8 @@ function GamePage() {
       // justifyContent="space-evenly"
       // overflow="hidden"
     >
-      <Box width="100%" minHeight="5em" bgcolor="white">
+      <Box width="100%" minHeight="5em" bgcolor="white" color='black' justifyContent="center" alignItems='center' display="flex">
+        <span style={{fontSize:"2rem"}}>Points: {points}</span>
       </Box>
       {
         cards.map((cardArray, ind) => {
